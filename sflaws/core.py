@@ -20,9 +20,12 @@ class SFLaw(object):
 
 
 class KM2005(SFLaw):
+    """
+    Krumholz & McKee 2005 law as parametrized by Federrath & Klessen 2012
+    """
     name = 'KM2005'
 
-    def __init__(self, phi_x=1.12, alpha_vir=1, Mach=10, Beta=np.inf,
+    def __init__(self, phi_x=0.12, alpha_vir=1, Mach=10, Beta=np.inf,
                  epsilon=0.3, phi_t=1./3., b=0.4):
         self.phi_x = phi_x
         self.alpha_vir = alpha_vir
@@ -48,6 +51,9 @@ class KM2005(SFLaw):
                                        (8*self.sigma_s**2)**0.5)))
 
 class PN2011(SFLaw):
+    """
+    Padoan & Nordlund 2011 law as parametrized by Federrath & Klessen 2012
+    """
     name = 'PN2011'
 
     def __init__(self, theta=0.65, alpha_vir=1, Mach=10, Beta=np.inf,
