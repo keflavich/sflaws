@@ -82,3 +82,49 @@ class PN2011(SFLaw):
                 (1 + scipy.special.erf((self.sigma_s**2 -
                                         2*self.scrit) /
                                        (8*self.sigma_s**2)**0.5)))
+
+class HC2011(SFLaw):
+    """
+    Hennebelle & Chabrier 2011 law as parametrized by Federrath & Klessen 2012
+    """
+    name = 'HC2011'
+
+    def __init__(self, y_cut=1.3, alpha_vir=1, Mach=10, Beta=np.inf,
+                 epsilon=0.3, phi_t=1./0.24, b=0.4):
+        self.y_cut = y_cut
+        self.alpha_vir = alpha_vir
+        self.Mach = Mach
+        self.Beta = Beta
+        self.phi_t = phi_t
+        self.epsilon = epsilon
+        self.b = b
+
+    @property
+    def fbeta(self):
+        return (1+0.925*self.Beta**-1.5)**(2/3.) / (1+self.Beta**-1)**2
+
+    @property
+    def rhocrit_thermal(self):
+        return ((np.pi**2/5.) * self.y_cut**-2 * self.alpha_vir * self.Mach**-2 *
+                (1+self.Beta**-1))
+
+    @property
+    def rhocrit_turbulent(self):
+        return np.pi**2 / 15. * self.y_cut**-1 * self.alpha_vir
+
+    @property
+    def scrit(self):
+        return np.log(self.rhocrit_turbulent + self.rhocrit_thermal)
+
+    def SFRff(self):
+        raise NotImplementedError
+
+class HC2011_multiff(HC2011):
+    """
+    Hennebelle & Chabrier 2011 law as parametrized by Federrath & Klessen 2012
+    """
+    name = 'HC2011_multiff'
+
+    @property
+    def scrit(self):
+        return np.log(self.rhocrit_thermal)
