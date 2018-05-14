@@ -1,5 +1,6 @@
 import numpy as np
 import scipy.special
+from scipy.special import erf
 
 class SFLaw(object):
 
@@ -128,3 +129,44 @@ class HC2011_multiff(HC2011):
     @property
     def scrit(self):
         return np.log(self.rhocrit_thermal)
+
+class Burkhart2018(PN2011):
+    """
+
+    """
+    name = 'Burkhart2018'
+
+    def __init__(self, alpha=2, Mach=10, epsilon=0.2, b=0.4,
+                 phi_t=1/3., alpha_vir=1., Beta=20,
+                ):
+        self.alpha = alpha
+        self.b = b
+        self.epsilon = epsilon
+        self.Mach = Mach
+
+        self.alpha_vir = alpha_vir
+        self.phi_t = phi_t
+        self.Beta = Beta
+
+        # eqn19
+        self.s_t = 0.5 * (2*np.abs(self.alpha) - 1) * self.sigma_s**2
+        self.C = (np.exp(0.5 * (self.alpha-1)
+                         * self.alpha * self.sigma_s**2)
+                  / (self.sigma_s * np.sqrt(2*np.pi)))
+        self.N = 2 * (1 + np.erf((2*np.log(self.s_t) +
+                                  self.sigma_s**2)/(2**1.5*self.sigma_s))
+                      + (2*self.C * self.s_t**self.alpha)/self.alpha)**-1
+
+
+    def SFRff(self):
+        return (np.exp(0.5*self.scrit) * self.N * self.epsilon
+                * (0.5 * erf((self.sigma_s**2 - 2*self.scrit)/np.sqrt(8*self.sigma_s**2))
+                   - 0.5 * erf((self.sigma_s**2 - 2*self.s_t)/np.sqrt(8*self.sigma_s**2))
+                   + self.C * np.exp(self.s_t * (1-self.alpha)) / (self.alpha-1))
+               )
+
+    @property
+    def scrit(self):
+        #return np.log(0.067 * self.theta**-2 * self.alpha_vir * self.Mach**2 *
+        #              self.fbeta)
+        return np.log(np.pi**2/15 * self.phi_t**2 * self.alpha_vir * self.Mach**2)
