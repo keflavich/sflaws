@@ -155,7 +155,7 @@ class Burkhart2018(PN2011):
                   / (self.sigma_s * np.sqrt(2*np.pi)))
         self.N = 2 * (1 + np.erf((2*np.log(self.s_t) +
                                   self.sigma_s**2)/(2**1.5*self.sigma_s))
-                      + (2*self.C * self.s_t**self.alpha)/self.alpha)**-1
+                      + (2*self.C * np.exp(-self.s_t*self.alpha))/self.alpha)**-1
 
 
     def SFRff(self):

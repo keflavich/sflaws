@@ -21,11 +21,14 @@ sfr_ffs = {(Mach,b): [Burkhart2018(alpha=alpha, Mach=Mach, b=b).SFRff() for alph
 
 rho_0 = 500*u.Da/u.cm**3
 tff = (3*np.pi / (32 * constants.G * rho_0))**0.5
-for Mass, style in [(100, '-'), (1000, '--'), (1e4, ':')]:
+for Mass, style, color in [(100, '-', 'b'), (1000, '--', 'k'), (1e4, ':', 'm'), (1e6, '-.', 'r')]:
     Mass = u.Quantity(Mass, u.M_sun)
     for Mach,bb in sfr_ffs:
         ax.semilogy(powerlaws,
-                    sfr_ffs[(Mach,bb)], # * Mass.to(u.M_sun) / tff.to(u.yr),
-                    label="$\mathcal{{M}}={0}$ $b={1}$".format(Mach, bb))
+                    sfr_ffs[(Mach,bb)] * Mass.to(u.M_sun) / tff.to(u.yr),
+                    linestyle=style, color=color,
+                    label="$\mathcal{{M}}={0}$ $b={1:0.1f}$ M$={2:0.1e}$ M$_\odot$".format(Mach, bb, Mass.to(u.M_sun).value))
 
+pl.xlabel("Power-law $\\alpha$")
+pl.ylabel("SFR [M$_\odot$ $yr^{-1}$]")
 pl.legend(loc='best')
